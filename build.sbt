@@ -112,16 +112,21 @@ lazy val circe = project.in(file("circe"))
     crossScalaVersions := Seq(scala211, scala212))
   .dependsOn(core, testkit % Test)
 
+
+val TapadSnapshots = "Tapad Nexus Snapshots" at "https://nexus.tapad.com/repository/snapshots"
+val TapadReleases = "Tapad Nexus Releases" at "https://nexus.tapad.com/repository/releases"
+
 lazy val publishSettings = Seq(
   publishMavenStyle := true,
   publishArtifact in Test := false,
   // The Nexus repo we're publishing to.
   publishTo := Some(
   if (isSnapshot.value)
-    Opts.resolver.sonatypeSnapshots
+    TapadSnapshots
   else
-    Opts.resolver.sonatypeStaging
+    TapadReleases
   ),
+  credentials += Credentials(Path.userHome / ".ivy2" / ".credentials"),
   pomIncludeRepository := { x => false },
   pomExtra := (
     <scm>
